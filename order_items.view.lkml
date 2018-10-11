@@ -94,83 +94,138 @@ view: order_items {
   }
 
   measure: average_sale_price {
+    description: "Average sale price of items sold"
     type: average
     sql: ${sale_price} ;;
     value_format_name: usd
+    group_label: "Sales Metrics"
   }
 
-  measure: total_sale_price {
+  measure: total_sales {
+    description: "Total sales from items sold"
     type: sum
     sql: ${sale_price} ;;
     value_format_name: usd
+    group_label: "Sales Metrics"
   }
 
-  measure: cumulative_total_sales {
+  measure: cumulative_sales {
+    description: "Cumulative total sales from items sold (also known as a running total)"
     type: running_total
     sql: ${sale_price} ;;
     value_format_name: usd
+    group_label: "Sales Metrics"
   }
 
   measure: total_gross_revenue {
+    description: "Total revenue from completed sales (cancelled and returned orders excluded)"
     type: sum
     sql: ${sale_price} ;;
     filters: {
       field: status
-      value: "Complete"
+      value: "-Cancelled,-Returned"
     }
     value_format_name: usd
-  }
-
-  measure: total_cost {
-    type: sum
-    sql: ${inventory_items.cost} ;;
-    value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
   }
 
   measure: average_cost {
+    description: "Average cost of items sold from inventory"
     type: average
     sql: ${inventory_items.cost} ;;
     value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
+  }
+
+  measure: total_cost {
+    description: "Total cost of items sold from inventory"
+    type: sum
+    sql: ${inventory_items.cost} ;;
+    value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
+  }
+
+  measure: average_gross_margin {
+    description: "Average difference between the total revenue from completed sales and the cost of the goods that were sold"
+    type: average
+    sql: ${sale_price} - ${inventory_items.cost} ;;
+    filters: {
+      field: status
+      value: "-Cancelled,-Returned"
+    }
+    value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
   }
 
   measure: total_gross_margin {
+    description: "Total difference between the total revenue from completed sales and the cost of the goods that were sold"
     type: sum
     sql: ${sale_price} - ${inventory_items.cost} ;;
     filters: {
       field: status
-      value: "Complete"
+      value: "-Cancelled,-Returned"
     }
     value_format_name: usd
-  }
-
-  measure: average_gross_margin {
-    type: average
-    sql: ${sale_price} - ${inventory_items.cost} ;;
-    filters: {
-      field: status
-      value: "Complete"
-    }
-    value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
   }
 
   measure: gross_margin_percent {
+    description: "Total Gross Margin Amount / Total Revenue"
     type: number
     sql: (${total_gross_margin} / ${total_gross_revenue})*100 ;;
     value_format_name: percent_1
+    group_label: "Revenue and Cost Metrics"
   }
 
   measure: returned_items_count {
+    description: "Number of items that were returned by dissatisfied customers"
     type: count
     filters: {
       field: status
       value: "Returned"
     }
+    group_label: "Return Metrics"
   }
 
   measure: returned_items_rate {
+    description: "Number of Items Returned / total number of items sold"
     type: number
     sql: (${returned_items_count}/${count})*100 ;;
     value_format_name: percent_1
+    group_label: "Return Metrics"
+  }
+
+  measure: customer_count {
+    description: "A customers is a user who has placed at least one order."
+    type: count_distinct
+    sql: ${user_id} ;;
+  }
+
+  measure: customers_returning_items_count {
+    description: "Number of customers who have returned an item at some point"
+    type: count_distinct
+    sql: ${user_id} ;;
+    filters: {
+      field: status
+      value: "Returned"
+    }
+    group_label: "Return Metrics"
+  }
+
+  measure: percent_of_customers_with_returns {
+    description: "Number of Customer Returning Items / total number of customers"
+    type: number
+    sql: (${customers_returning_items_count}/${customer_count})*100 ;;
+    value_format_name: percent_1
+    group_label: "Return Metrics"
+  }
+
+  measure: average_spend_per_customer {
+    description: "Total Sale Price / total number of customers"
+    type: number
+    sql: ${total_sales}/${customer_count} ;;
+    value_format_name: usd
+    group_label: "Sales Metrics"
   }
 
   # ----- Sets of fields for drilling ------
