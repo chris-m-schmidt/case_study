@@ -172,7 +172,7 @@ view: order_items {
   measure: gross_margin_percent {
     description: "Total Gross Margin Amount / Total Revenue"
     type: number
-    sql: (${total_gross_margin} / ${total_gross_revenue})*100 ;;
+    sql: ${total_gross_margin}*1.0 / ${total_gross_revenue} ;;
     value_format_name: percent_1
     group_label: "Revenue and Cost Metrics"
   }
@@ -190,7 +190,7 @@ view: order_items {
   measure: returned_items_rate {
     description: "Number of Items Returned / total number of items sold"
     type: number
-    sql: (${returned_items_count}/${count})*100 ;;
+    sql: ${order_items.returned_items_count}*1.0 / ${order_items.count} ;;
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
@@ -215,7 +215,7 @@ view: order_items {
   measure: percent_of_customers_with_returns {
     description: "Number of Customer Returning Items / total number of customers"
     type: number
-    sql: (${customers_returning_items_count}/${customer_count})*100 ;;
+    sql: ${customers_returning_items_count}*1.0 / ${customer_count} ;;
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
