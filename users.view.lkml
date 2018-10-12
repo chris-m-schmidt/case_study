@@ -86,4 +86,31 @@ view: users {
     type: count
     drill_fields: [id, last_name, first_name]
   }
+
+  measure: month_to_date_user_count {
+    type: count
+    filters: {
+      field: is_before_minute_of_month
+      value: "yes"
+    }
+  }
+
+  filter: is_before_minute_of_month {
+    hidden: yes
+    type: yesno
+    sql:
+        (EXTRACT(DAY FROM ${TABLE}.created_at) < EXTRACT(DAY FROM GETDATE())
+          OR
+          (
+            EXTRACT(DAY FROM ${TABLE}.created_at) = EXTRACT(DAY FROM GETDATE()) AND
+            EXTRACT(HOUR FROM ${TABLE}.created_at) < EXTRACT(HOUR FROM GETDATE())
+          )
+          OR
+          (
+            EXTRACT(DAY FROM ${TABLE}.created_at) = EXTRACT(DAY FROM GETDATE()) AND
+            EXTRACT(HOUR FROM ${TABLE}.created_at) <= EXTRACT(HOUR FROM GETDATE()) AND
+            EXTRACT(MINUTE FROM ${TABLE}.created_at) < EXTRACT(MINUTE FROM GETDATE())
+          )
+        ) ;;
+  }
 }

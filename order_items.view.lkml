@@ -109,10 +109,23 @@ view: order_items {
     group_label: "Sales Metrics"
   }
 
-  measure: cumulative_sales {
+  measure: year_to_date_total_sales {
+    description: "Total sales from beginning of year to today's date"
+    type: sum
+    sql: ${sale_price} ;;
+    value_format_name: usd
+    filters: {
+      field: is_before_hour_of_year
+      value: "yes"
+    }
+  group_label: "Sales Metrics"
+  }
+
+
+  measure: cumulative_total_sales {
     description: "Cumulative total sales from items sold (also known as a running total)"
     type: running_total
-    sql: ${sale_price} ;;
+    sql: ${total_sales} ;;
     value_format_name: usd
     group_label: "Sales Metrics"
   }
@@ -172,7 +185,7 @@ view: order_items {
   measure: gross_margin_percent {
     description: "Total Gross Margin Amount / Total Revenue"
     type: number
-    sql: ${total_gross_margin}*1.0 / ${total_gross_revenue} ;;
+    sql: ${total_gross_margin} / NULLIF(${total_gross_revenue},0) ;;
     value_format_name: percent_1
     group_label: "Revenue and Cost Metrics"
   }
@@ -190,7 +203,7 @@ view: order_items {
   measure: returned_items_rate {
     description: "Number of Items Returned / total number of items sold"
     type: number
-    sql: ${order_items.returned_items_count}*1.0 / ${order_items.count} ;;
+    sql: 1.0 * ${order_items.returned_items_count} / NULLIF(${order_items.count},0) ;;
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
@@ -215,7 +228,7 @@ view: order_items {
   measure: percent_of_customers_with_returns {
     description: "Number of Customer Returning Items / total number of customers"
     type: number
-    sql: ${customers_returning_items_count}*1.0 / ${customer_count} ;;
+    sql: 1.0 * ${customers_returning_items_count} / NULLIF(${customer_count},0) ;;
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
@@ -223,9 +236,28 @@ view: order_items {
   measure: average_spend_per_customer {
     description: "Total Sale Price / total number of customers"
     type: number
-    sql: ${total_sales}/${customer_count} ;;
+    sql: ${total_sales} / NULLIF(${customer_count},0) ;;
     value_format_name: usd
     group_label: "Sales Metrics"
+  }
+
+  filter: is_before_hour_of_year {
+    hidden: yes
+    type: yesno
+    sql:
+        (EXTRACT(MONTH FROM ${TABLE}.created_at) < EXTRACT(MONTH FROM GETDATE())
+          OR
+          (
+            EXTRACT(MONTH FROM ${TABLE}.created_at) = EXTRACT(MONTH FROM GETDATE()) AND
+            EXTRACT(DAY FROM ${TABLE}.created_at) < EXTRACT(DAY FROM GETDATE())
+          )
+          OR
+          (
+            EXTRACT(MONTH FROM ${TABLE}.created_at) = EXTRACT(MONTH FROM GETDATE()) AND
+            EXTRACT(DAY FROM ${TABLE}.created_at) <= EXTRACT(DAY FROM GETDATE()) AND
+            EXTRACT(HOUR FROM ${TABLE}.created_at) < EXTRACT(HOUR FROM GETDATE())
+          )
+        ) ;;
   }
 
   # ----- Sets of fields for drilling ------
