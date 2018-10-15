@@ -118,14 +118,21 @@ view: order_items {
       field: is_before_hour_of_year
       value: "yes"
     }
-  group_label: "Sales Metrics"
+    group_label: "Sales Metrics"
   }
-
 
   measure: cumulative_total_sales {
     description: "Cumulative total sales from items sold (also known as a running total)"
     type: running_total
     sql: ${total_sales} ;;
+    value_format_name: usd
+    group_label: "Sales Metrics"
+  }
+
+  measure: average_spend_per_customer {
+    description: "Total Sale Price / total number of customers"
+    type: number
+    sql: ${total_sales} / NULLIF(${customer_count},0) ;;
     value_format_name: usd
     group_label: "Sales Metrics"
   }
@@ -137,6 +144,38 @@ view: order_items {
     filters: {
       field: status
       value: "-Cancelled,-Returned"
+    }
+    value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
+  }
+
+  measure: total_gross_revenue_from_new_customers {
+    description: "Total revenue from users who have signed up with the website in the last 90 complete days."
+    type: sum
+    sql: ${sale_price} ;;
+    filters: {
+      field: status
+      value: "-Cancelled,-Returned"
+      }
+    filters: {
+      field: users.is_new_user
+      value: "yes"
+    }
+    value_format_name: usd
+    group_label: "Revenue and Cost Metrics"
+  }
+
+  measure: total_gross_revenue_from_existing_customers {
+    description: "Total revenue from users who have signed up with the website in the last 90 complete days."
+    type: sum
+    sql: ${sale_price} ;;
+    filters: {
+      field: status
+      value: "-Cancelled,-Returned"
+    }
+    filters: {
+      field: users.is_new_user
+      value: "no"
     }
     value_format_name: usd
     group_label: "Revenue and Cost Metrics"
@@ -209,7 +248,8 @@ view: order_items {
   }
 
   measure: customer_count {
-    description: "A customers is a user who has placed at least one order."
+    hidden: yes
+#     description: "A customers is a user who has placed at least one order."
     type: count_distinct
     sql: ${user_id} ;;
   }
@@ -233,14 +273,6 @@ view: order_items {
     group_label: "Return Metrics"
   }
 
-  measure: average_spend_per_customer {
-    description: "Total Sale Price / total number of customers"
-    type: number
-    sql: ${total_sales} / NULLIF(${customer_count},0) ;;
-    value_format_name: usd
-    group_label: "Sales Metrics"
-  }
-
   filter: is_before_hour_of_year {
     hidden: yes
     type: yesno
@@ -258,6 +290,23 @@ view: order_items {
             EXTRACT(HOUR FROM ${TABLE}.created_at) < EXTRACT(HOUR FROM GETDATE())
           )
         ) ;;
+  }
+
+  set: customer_explore_field_set {
+    fields: [
+      order_items.user_id,
+      order_items.created_date,
+      order_items.status,
+      order_items.count,
+      order_items.customer_count,
+      order_items.total_sales,
+      order_items.average_spend_per_customer,
+      order_items.total_gross_revenue,
+      order_items.total_gross_revenue_from_new_customers,
+      order_items.total_gross_revenue_from_existing_customers,
+      order_items.customers_returning_items_count,
+      order_items.percent_of_customers_with_returns
+    ]
   }
 
   # ----- Sets of fields for drilling ------

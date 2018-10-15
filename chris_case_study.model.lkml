@@ -14,12 +14,7 @@ explore: users {
   label: "Customers"
   description: "User Attributes and Customer Behavior Metrics"
   join: order_items {
-    fields: [order_items.count,
-            order_items.status,
-            order_items.customer_count,
-            order_items.average_spend_per_customer,
-            order_items.customers_returning_items_count,
-            order_items.percent_of_customers_with_returns]
+    fields: [order_items.customer_explore_field_set*]
     type: left_outer
     sql_on: ${users.id} = ${order_items.user_id} ;;
     relationship: one_to_many
@@ -28,6 +23,7 @@ explore: users {
 
 explore: order_items {
   description: "Detailed Order Item and Customer Metrics"
+  fields: [ALL_FIELDS*, -order_items.total_gross_revenue_from_new_customers, -order_items.total_gross_revenue_from_existing_customers]
   join: inventory_items {
     fields: [inventory_items.cost]
     type: left_outer

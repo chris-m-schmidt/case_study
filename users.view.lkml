@@ -15,6 +15,7 @@ view: users {
   dimension: age_tier {
     type: tier
     tiers: [15, 26, 36, 51, 66]
+    style: integer
     sql: ${age} ;;
   }
 
@@ -118,5 +119,17 @@ view: users {
             EXTRACT(MINUTE FROM ${TABLE}.created_at) < EXTRACT(MINUTE FROM GETDATE())
           )
         ) ;;
+  }
+
+  filter: is_new_user {
+    description: "Users who have signed up with the website in the last 90 complete days."
+    type: yesno
+    sql: ${TABLE}.created_at >= DATEADD(day,-90, DATE_TRUNC('day', GETDATE())) ;;
+  }
+
+  filter: is_customer {
+    description: "A customers is a user who has placed at least one order."
+    type: yesno
+    sql: ${TABLE}.id = ${order_items.user_id} ;;
   }
 }
