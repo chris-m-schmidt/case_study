@@ -158,7 +158,7 @@ view: order_items {
       value: "-Cancelled,-Returned"
       }
     filters: {
-      field: users.is_new_user
+      field: order_items.is_new_user
       value: "yes"
     }
     value_format_name: usd
@@ -166,7 +166,7 @@ view: order_items {
   }
 
   measure: total_gross_revenue_from_existing_customers {
-    description: "Total revenue from users who have signed up with the website in the last 90 complete days."
+    description: "Total revenue from users who signed up with the website more than 90 complete days ago."
     type: sum
     sql: ${sale_price} ;;
     filters: {
@@ -174,8 +174,8 @@ view: order_items {
       value: "-Cancelled,-Returned"
     }
     filters: {
-      field: users.is_new_user
-      value: "no"
+      field: order_items.is_existing_user
+      value: "yes"
     }
     value_format_name: usd
     group_label: "Revenue and Cost Metrics"
@@ -277,19 +277,33 @@ view: order_items {
     hidden: yes
     type: yesno
     sql:
-        (EXTRACT(MONTH FROM ${TABLE}.created_at) < EXTRACT(MONTH FROM GETDATE())
+        (EXTRACT(MONTH FROM ${created_raw}) < EXTRACT(MONTH FROM GETDATE())
           OR
           (
-            EXTRACT(MONTH FROM ${TABLE}.created_at) = EXTRACT(MONTH FROM GETDATE()) AND
-            EXTRACT(DAY FROM ${TABLE}.created_at) < EXTRACT(DAY FROM GETDATE())
+            EXTRACT(MONTH FROM ${created_raw}) = EXTRACT(MONTH FROM GETDATE()) AND
+            EXTRACT(DAY FROM ${created_raw}) < EXTRACT(DAY FROM GETDATE())
           )
           OR
           (
-            EXTRACT(MONTH FROM ${TABLE}.created_at) = EXTRACT(MONTH FROM GETDATE()) AND
-            EXTRACT(DAY FROM ${TABLE}.created_at) <= EXTRACT(DAY FROM GETDATE()) AND
-            EXTRACT(HOUR FROM ${TABLE}.created_at) < EXTRACT(HOUR FROM GETDATE())
+            EXTRACT(MONTH FROM ${created_raw}) = EXTRACT(MONTH FROM GETDATE()) AND
+            EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM GETDATE()) AND
+            EXTRACT(HOUR FROM ${created_raw}) < EXTRACT(HOUR FROM GETDATE())
           )
         ) ;;
+  }
+
+  filter: is_new_user {
+#     hidden: yes
+    description: "Users who have signed up with the website in the last 90 complete days."
+    type: yesno
+    sql: ${users.created_raw} >= DATEADD(day,-90, DATE_TRUNC('day', ${order_items.created_raw})) ;;
+  }
+
+  filter: is_existing_user {
+#     hidden: yes
+    description: "Users who signed up with the website more than 90 complete days ago."
+    type: yesno
+    sql: ${users.created_raw} < DATEADD(day,-90, DATE_TRUNC('day', ${order_items.created_raw})) ;;
   }
 
   set: customer_explore_field_set {
@@ -305,7 +319,9 @@ view: order_items {
       order_items.total_gross_revenue_from_new_customers,
       order_items.total_gross_revenue_from_existing_customers,
       order_items.customers_returning_items_count,
-      order_items.percent_of_customers_with_returns
+      order_items.percent_of_customers_with_returns,
+      order_items.is_new_user,
+      order_items.is_existing_user
     ]
   }
 

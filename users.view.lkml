@@ -106,25 +106,19 @@ view: users {
     hidden: yes
     type: yesno
     sql:
-        (EXTRACT(DAY FROM ${TABLE}.created_at) < EXTRACT(DAY FROM GETDATE())
+        (EXTRACT(DAY FROM ${created_raw}) < EXTRACT(DAY FROM GETDATE())
           OR
           (
-            EXTRACT(DAY FROM ${TABLE}.created_at) = EXTRACT(DAY FROM GETDATE()) AND
-            EXTRACT(HOUR FROM ${TABLE}.created_at) < EXTRACT(HOUR FROM GETDATE())
+            EXTRACT(DAY FROM ${created_raw}) = EXTRACT(DAY FROM GETDATE()) AND
+            EXTRACT(HOUR FROM ${created_raw}) < EXTRACT(HOUR FROM GETDATE())
           )
           OR
           (
-            EXTRACT(DAY FROM ${TABLE}.created_at) = EXTRACT(DAY FROM GETDATE()) AND
-            EXTRACT(HOUR FROM ${TABLE}.created_at) <= EXTRACT(HOUR FROM GETDATE()) AND
-            EXTRACT(MINUTE FROM ${TABLE}.created_at) < EXTRACT(MINUTE FROM GETDATE())
+            EXTRACT(DAY FROM ${created_raw}) = EXTRACT(DAY FROM GETDATE()) AND
+            EXTRACT(HOUR FROM ${created_raw}) <= EXTRACT(HOUR FROM GETDATE()) AND
+            EXTRACT(MINUTE FROM ${created_raw}) < EXTRACT(MINUTE FROM GETDATE())
           )
         ) ;;
-  }
-
-  filter: is_new_user {
-    description: "Users who have signed up with the website in the last 90 complete days."
-    type: yesno
-    sql: ${TABLE}.created_at >= DATEADD(day,-90, DATE_TRUNC('day', GETDATE())) ;;
   }
 
   filter: is_customer {
