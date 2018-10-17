@@ -237,6 +237,7 @@ view: order_items {
     }
     value_format_name: usd
     group_label: "Revenue and Cost Metrics"
+    drill_fields: [inventory_items.product_brand, inventory_items.product_category, average_gross_margin]
   }
 
   measure: total_gross_margin {
@@ -249,6 +250,7 @@ view: order_items {
     }
     value_format_name: usd
     group_label: "Revenue and Cost Metrics"
+    drill_fields: [inventory_items.product_brand, inventory_items.product_category, total_gross_margin]
   }
 
   measure: gross_margin_percent {
