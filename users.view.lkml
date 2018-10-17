@@ -124,6 +124,6 @@ view: users {
   filter: is_customer {
     description: "A customers is a user who has placed at least one order."
     type: yesno
-    sql: ${TABLE}.id = ${order_items.user_id} ;;
+    sql: ${id} = ${order_items.user_id} ;;
   }
 }
