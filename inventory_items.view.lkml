@@ -90,4 +90,20 @@ view: inventory_items {
     type: count
     drill_fields: [id, product_name]
   }
+
+  measure: average_cost {
+    description: "Average cost of items sold from inventory"
+    type: average
+    sql: ${inventory_items.cost} ;;
+    value_format_name: usd
+    group_label: "Cost Metrics"
+    }
+
+  measure: total_cost {
+    description: "Total cost of items sold from inventory"
+    type: sum
+    sql: ${inventory_items.cost} ;;
+    value_format_name: usd
+    group_label: "Cost Metrics"
+  }
 }

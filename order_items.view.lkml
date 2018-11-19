@@ -176,8 +176,8 @@ view: order_items {
       value: "-Cancelled,-Returned"
     }
     value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
-  }
+    group_label: "Revenue and Profit Metrics"
+    }
 
   measure: total_gross_revenue_from_new_customers {
     description: "Total revenue from users who have signed up with the website in the last 90 complete days."
@@ -192,8 +192,8 @@ view: order_items {
       value: "yes"
     }
     value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
-  }
+    group_label: "Revenue and Profit Metrics"
+    }
 
   measure: total_gross_revenue_from_existing_customers {
     description: "Total revenue from users who signed up with the website more than 90 complete days ago."
@@ -208,24 +208,8 @@ view: order_items {
       value: "yes"
     }
     value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
-  }
-
-  measure: average_cost {
-    description: "Average cost of items sold from inventory"
-    type: average
-    sql: ${inventory_items.cost} ;;
-    value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
-  }
-
-  measure: total_cost {
-    description: "Total cost of items sold from inventory"
-    type: sum
-    sql: ${inventory_items.cost} ;;
-    value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
-  }
+    group_label: "Revenue and Profit Metrics"
+    }
 
   measure: average_gross_margin {
     description: "Average difference between the total revenue from completed sales and the cost of the goods that were sold"
@@ -236,7 +220,7 @@ view: order_items {
       value: "-Cancelled,-Returned"
     }
     value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
+    group_label: "Revenue and Profit Metrics"
     drill_fields: [inventory_items.product_brand, inventory_items.product_category, average_gross_margin]
   }
 
@@ -249,7 +233,7 @@ view: order_items {
       value: "-Cancelled,-Returned"
     }
     value_format_name: usd
-    group_label: "Revenue and Cost Metrics"
+    group_label: "Revenue and Profit Metrics"
     drill_fields: [inventory_items.product_brand, inventory_items.product_category, total_gross_margin]
   }
 
@@ -258,8 +242,8 @@ view: order_items {
     type: number
     sql: ${total_gross_margin} / NULLIF(${total_gross_revenue},0) ;;
     value_format_name: percent_1
-    group_label: "Revenue and Cost Metrics"
-  }
+    group_label: "Revenue and Profit Metrics"
+    }
 
   measure: returned_items_count {
     description: "Number of items that were returned by dissatisfied customers"
