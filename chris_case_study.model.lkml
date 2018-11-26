@@ -9,14 +9,32 @@ datagroup: default_datagroup {
 persist_with: default_datagroup
 
 explore: users {
-  label: "Customers"
+  label: "Customer Behavior"
   description: "User Attributes and Customer Behavior Metrics"
 
   join: order_items {
     fields: [order_items.customer_explore_field_set*]
-    type: left_outer
+    type: inner
     sql_on: ${users.id} = ${order_items.user_id} ;;
     relationship: one_to_many
+  }
+
+  join: customer_facts {
+    type: inner
+    sql_on: ${users.id} = ${customer_facts.user_id} ;;
+    relationship: one_to_one
+  }
+
+  join: events {
+    type: inner
+    sql_on: ${users.id} = ${events.user_id} ;;
+    relationship: one_to_many
+  }
+
+  join: inventory_items {
+    type: inner
+    sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+    relationship: one_to_one
   }
 }
 

@@ -1,6 +1,9 @@
 view: order_items {
   sql_table_name: public.order_items ;;
 
+
+# -------------------- DIMENSIONS ---------------------------
+
   dimension: id {
     primary_key: yes
     type: number
@@ -88,9 +91,29 @@ view: order_items {
     sql: ${TABLE}.user_id ;;
   }
 
-  measure: count {
+
+# ------------------- MEASURES ----------------------------
+
+  measure: items_count {
     type: count
     drill_fields: [id]
+  }
+
+  measure: order_count {
+    type: count_distinct
+    sql: ${order_id} ;;
+  }
+
+  measure: earliest_order {
+    type: date_time
+    sql: MIN(${created_raw}) ;;
+    convert_tz: no
+  }
+
+  measure: latest_order {
+    type: date_time
+    sql: MAX(${created_raw}) ;;
+    convert_tz: no
   }
 
   measure: average_sale_price {
@@ -143,7 +166,7 @@ view: order_items {
     type: sum
     sql: ${sale_price} ;;
     filters: {
-      field: is_new_user
+      field: users.is_new_user
       value: "yes"
     }
   }
@@ -153,7 +176,7 @@ view: order_items {
     type: count_distinct
     sql: ${user_id} ;;
     filters: {
-      field: is_new_user
+      field: users.is_new_user
       value: "yes"
     }
   }
@@ -188,7 +211,7 @@ view: order_items {
       value: "-Cancelled,-Returned"
     }
     filters: {
-      field: order_items.is_new_user
+      field: users.is_new_user
       value: "yes"
     }
     value_format_name: usd
@@ -204,7 +227,7 @@ view: order_items {
       value: "-Cancelled,-Returned"
     }
     filters: {
-      field: order_items.is_existing_user
+      field: users.is_existing_user
       value: "yes"
     }
     value_format_name: usd
@@ -258,10 +281,17 @@ view: order_items {
   measure: returned_items_rate {
     description: "Number of Items Returned / total number of items sold"
     type: number
-    sql: 1.0 * ${order_items.returned_items_count} / NULLIF(${order_items.count},0) ;;
+    sql: 1.0 * ${order_items.returned_items_count} / NULLIF(${order_items.items_count},0) ;;
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
+
+#   measure: returned_first_order_item {
+#     hidden: yes
+#     type: yesno
+#     sql: ${returned_items_count} > 0 AND ${created_raw} = ${earliest_order} ;;
+#     group_label: "Return Metrics"
+#   }
 
   measure: customer_count {
     hidden: yes
@@ -289,6 +319,9 @@ view: order_items {
     group_label: "Return Metrics"
   }
 
+
+# --------------- FILTERS -------------------------------
+
   filter: is_before_hour_of_year {
     hidden: yes
     type: yesno
@@ -308,37 +341,30 @@ view: order_items {
         ) ;;
   }
 
-  filter: is_new_user {
-#     hidden: yes
-  description: "Users who have signed up with the website in the last 90 complete days."
-  type: yesno
-  sql: ${users.created_raw} >= DATEADD(day,-90, DATE_TRUNC('day', ${order_items.created_raw})) ;;
-}
 
-filter: is_existing_user {
-#     hidden: yes
-description: "Users who signed up with the website more than 90 complete days ago."
-type: yesno
-sql: ${users.created_raw} < DATEADD(day,-90, DATE_TRUNC('day', ${order_items.created_raw})) ;;
-}
-
+# ---------------- SETS -----------------------------
 
 set: customer_explore_field_set {
   fields: [
     order_items.user_id,
     order_items.created_date,
+    order_items.created_month,
     order_items.status,
-    order_items.count,
+    order_items.items_count,
+    order_items.order_count,
     order_items.customer_count,
+    order_items.earliest_order,
+    order_items.latest_order,
     order_items.total_sales,
     order_items.average_spend_per_customer,
     order_items.total_gross_revenue,
     order_items.total_gross_revenue_from_new_customers,
     order_items.total_gross_revenue_from_existing_customers,
+    order_items.returned_items_count,
+    order_items.returned_items_rate,
+#     order_items.returned_first_order_item,
     order_items.customers_returning_items_count,
     order_items.percent_of_customers_with_returns,
-    order_items.is_new_user,
-    order_items.is_existing_user
   ]
 }
 

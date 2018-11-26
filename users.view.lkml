@@ -1,6 +1,9 @@
 view: users {
   sql_table_name: public.users ;;
 
+
+# --------------------------- DIMENSIONS -------------------
+
   dimension: id {
     primary_key: yes
     type: number
@@ -95,6 +98,9 @@ view: users {
     sql: ${TABLE}.zip ;;
   }
 
+
+# ---------------------- MEASURES ----------------------------
+
   measure: count {
     type: count
     drill_fields: [id, last_name, first_name]
@@ -107,6 +113,9 @@ view: users {
       value: "yes"
     }
   }
+
+
+# --------------------- FILTERS ------------------------------
 
   filter: is_before_minute_of_month {
     hidden: yes
@@ -127,9 +136,18 @@ view: users {
         ) ;;
   }
 
-  filter: is_customer {
-    description: "A customers is a user who has placed at least one order."
+
+  filter: is_new_user {
+#     hidden: yes
+  description: "Users who have signed up with the website in the last 90 complete days."
+  type: yesno
+  sql: ${users.created_raw} >= DATEADD(day,-90, DATE_TRUNC('day', ${order_items.created_raw})) ;;
+  }
+
+  filter: is_existing_user {
+    #     hidden: yes
+    description: "Users who signed up with the website more than 90 complete days ago."
     type: yesno
-    sql: ${id} = ${order_items.user_id} ;;
+    sql: ${users.created_raw} < DATEADD(day,-90, DATE_TRUNC('day', ${order_items.created_raw})) ;;
   }
 }
