@@ -47,6 +47,30 @@ view: users {
     sql: ${TABLE}.created_at ;;
   }
 
+  dimension: days_since_signup {
+    type: number
+    sql: DATEDIFF(day, ${users.created_raw}, CURRENT_DATE) ;;
+  }
+
+  dimension: months_since_signup {
+    type: number
+    sql: DATEDIFF(month, ${users.created_raw}, CURRENT_DATE) ;;
+  }
+
+  dimension: months_since_signup_tier {
+    type: tier
+    tiers: [1, 4, 7, 10, 13, 19, 25]
+    style: integer
+    sql: ${months_since_signup} ;;
+  }
+
+  dimension: months_since_signup_tier_2 {
+    type: tier
+    tiers: [1, 2, 13, 25]
+    style: integer
+    sql: ${months_since_signup} ;;
+  }
+
   dimension: email {
     type: string
     sql: ${TABLE}.email ;;
@@ -113,6 +137,17 @@ view: users {
       value: "yes"
     }
   }
+
+  measure: average_days_since_signup {
+    type: average
+    sql: ${days_since_signup}_signup} ;;
+  }
+
+  measure: average_months_since_signup {
+    type: average
+    sql: ${months_since_signup} ;;
+  }
+
 
 
 # --------------------- FILTERS ------------------------------

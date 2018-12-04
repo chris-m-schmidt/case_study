@@ -18,6 +18,7 @@ view: order_items {
       date,
       week,
       month,
+      month_name,
       quarter,
       year
     ]
@@ -90,6 +91,8 @@ view: order_items {
     type: number
     sql: ${TABLE}.user_id ;;
   }
+
+
 
 
 # ------------------- MEASURES ----------------------------
