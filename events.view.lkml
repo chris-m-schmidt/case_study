@@ -1,6 +1,9 @@
 view: events {
   sql_table_name: public.events ;;
 
+
+#-------------- DIMENSIONS ---------------
+
   dimension: id {
     primary_key: yes
     type: number
@@ -96,6 +99,9 @@ view: events {
     type: zipcode
     sql: ${TABLE}.zip ;;
   }
+
+
+#-------------- MEASURES ---------------
 
   measure: count {
     type: count

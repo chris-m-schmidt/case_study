@@ -53,12 +53,6 @@ explore: order_items {
     relationship: many_to_one
   }
 
-#   join: products {
-#     type: inner
-#     sql_on: ${inventory_items.product_id} = ${products.id} ;;
-#     relationship: many_to_one
-#   }
-
   join: users {
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
@@ -75,15 +69,8 @@ explore: brand_comparison {
           inventory_items.brand_to_compare]
 
   join: inventory_items {
-#     fields: [id, product_id]
     type: inner
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
     relationship: many_to_one
   }
-
-#   join: products {
-#     type: inner
-#     sql_on: ${inventory_items.product_id} = ${products.id} ;;
-#     relationship: many_to_one
-#   }
 }

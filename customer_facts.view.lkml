@@ -1,5 +1,4 @@
-# If necessary, uncomment the line below to include explore_source.
-# include: "chris_case_study.model.lkml"
+include: "chris_case_study.model.lkml"
 
 view: customer_facts {
   derived_table: {

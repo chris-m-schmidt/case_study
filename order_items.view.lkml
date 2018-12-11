@@ -94,7 +94,6 @@ view: order_items {
 
 
 
-
 # ------------------- MEASURES ----------------------------
 
   measure: items_count {
