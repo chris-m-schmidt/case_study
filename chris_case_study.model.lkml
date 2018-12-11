@@ -40,7 +40,7 @@ explore: users {
   join: inventory_items {
     type: inner
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-    relationship: one_to_one
+    relationship: many_to_one
   }
 }
 
@@ -50,12 +50,40 @@ explore: order_items {
   join: inventory_items {
     type: left_outer
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-    relationship: one_to_one
+    relationship: many_to_one
   }
+
+#   join: products {
+#     type: inner
+#     sql_on: ${inventory_items.product_id} = ${products.id} ;;
+#     relationship: many_to_one
+#   }
 
   join: users {
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
     relationship: many_to_one
   }
+}
+
+explore: brand_comparison {
+  from: order_items
+  view_name: order_items
+  fields: [order_items.created_date, order_items.created_week, order_items.created_month,
+          order_items.items_count, order_items.total_gross_revenue, order_items.status,
+          inventory_items.product_category, inventory_items.product_brand, inventory_items.brand_comparison,
+          inventory_items.brand_to_compare]
+
+  join: inventory_items {
+#     fields: [id, product_id]
+    type: inner
+    sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+    relationship: many_to_one
+  }
+
+#   join: products {
+#     type: inner
+#     sql_on: ${inventory_items.product_id} = ${products.id} ;;
+#     relationship: many_to_one
+#   }
 }

@@ -34,7 +34,21 @@ view: inventory_items {
       url: "http://www.google.com/search?q={{ value | url_encode }}"
       icon_url: "http://google.com/favicon.ico"
     }
+    link: {
+      label: "Brand Comparison"
+      url: "https://profservices.dev.looker.com/dashboards/107?Brand%20to%20Compare={{ value | url_encode }}"
+      icon_url: "http://looker.com/favicon.ico"
+    }
+
     drill_fields: [id, product_category, product_name]
+  }
+
+  dimension: brand_comparison {
+    type: string
+    sql:  CASE
+            WHEN {% condition brand_to_compare %} ${product_brand} {% endcondition %} THEN ${product_brand}
+            ELSE 'All Other Brands'
+          END ;;
   }
 
   dimension: product_category {
@@ -105,5 +119,14 @@ view: inventory_items {
     sql: ${inventory_items.cost} ;;
     value_format_name: usd
     group_label: "Cost Metrics"
+  }
+
+
+#---------------- FILTERS -----------------------
+
+  filter: brand_to_compare {
+    type: string
+    suggest_explore: brand_comparison
+    suggest_dimension: product_brand
   }
 }
