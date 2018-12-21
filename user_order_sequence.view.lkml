@@ -1,5 +1,7 @@
 view: user_order_sequence {
   derived_table: {
+    datagroup_trigger: default_datagroup
+    distribution_style: all
     sql:
 
     WITH orders AS (SELECT DISTINCT user_id, id, created_at FROM order_items)

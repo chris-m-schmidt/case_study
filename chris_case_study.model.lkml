@@ -4,6 +4,7 @@ include: "*.view"
 
 datagroup: default_datagroup {
   max_cache_age: "1 hour"
+  sql_trigger: SELECT CURRENT_DATE ;;
 }
 
 persist_with: default_datagroup
