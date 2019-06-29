@@ -59,6 +59,12 @@ explore: order_items {
     sql_on: ${order_items.user_id} = ${users.id} ;;
     relationship: many_to_one
   }
+
+  join: free_text {
+    type: left_outer
+    relationship: many_to_one
+    sql:  ;;
+  }
 }
 
 explore: brand_comparison {
