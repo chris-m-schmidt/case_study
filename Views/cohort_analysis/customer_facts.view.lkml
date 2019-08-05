@@ -1,4 +1,4 @@
-include: "chris_case_study.model.lkml"
+include: "/*/chris_case_study.model.lkml"
 
 view: customer_facts {
   derived_table: {

@@ -1,6 +1,7 @@
 connection: "thelook_events_redshift"
 
-include: "*.view"
+include: "/Views/*/*.view"
+include: "/Views/*.view"
 
 datagroup: default_datagroup {
   max_cache_age: "1 hour"
