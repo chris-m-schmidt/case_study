@@ -1,6 +1,6 @@
 include: "/*/chris_case_study.model.lkml"
 
-view: customer_facts {
+view: cohort_facts {
   derived_table: {
     explore_source: users {
       column: user_id { field: order_items.user_id }

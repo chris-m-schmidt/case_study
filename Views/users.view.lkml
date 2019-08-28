@@ -110,6 +110,26 @@ view: users {
   dimension: state {
     map_layer_name: us_states
     sql: ${TABLE}.state ;;
+    drill_fields: [city]
+  }
+
+  dimension: state_2 {#Use with drill_link_for_state for custom drilling in map visualization
+#     hidden: yes
+    label: "State"
+    map_layer_name: us_states
+    sql: ${TABLE}.state ;;
+    html: <b>{{rendered_value}}</b>;;
+  }
+
+  measure: drill_link_for_state {
+    label: " " #uncomment after selecting the measure, otherwise you won't be able to see it in field picker!
+#     hidden: yes
+    type: sum
+    sql: 1 ;;
+    html:<a href="#drillmenu" target="_self">Drill by Practice
+    <img src="https://i.imgur.com/oJcKRMW.jpg?1" style="width:12px; height:12px">
+      ;;
+    drill_fields: [city, users.count, order_items.order_count]
   }
 
   dimension: traffic_source {

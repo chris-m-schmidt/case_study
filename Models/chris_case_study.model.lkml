@@ -1,22 +1,19 @@
 connection: "thelook_events_redshift"
 
-include: "/Views/*/*.view"
-include: "/Views/*.view"
+include: "/**/*.view"                 # All views anywhere
+# include: "/Views/**/*.view"         # All views anywhere inside "Views" folder (sub-folder or free)
+# include: "/Views/*.view"            # All views in "Views" folder that are not in sub-folder (redundant from 1st)
+# include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)
+# include: "/*.view"                  # All views not in any folder
 
-datagroup: default_datagroup {
-  max_cache_age: "1 hour"
-  sql_trigger: SELECT CURRENT_DATE ;;
-}
-
-persist_with: default_datagroup
-
+#update
 explore: users {
   label: "Customer"
   description: "User Attributes and Customer Behavior Metrics"
 
-  join: customer_facts {
+  join: cohort_facts {
     type: inner
-    sql_on: ${users.id} = ${customer_facts.user_id} ;;
+    sql_on: ${users.id} = ${cohort_facts.user_id} ;;
     relationship: one_to_one
   }
 
@@ -25,12 +22,6 @@ explore: users {
     type: inner
     sql_on: ${users.id} = ${order_items.user_id} ;;
     relationship: one_to_many
-  }
-
-  join: user_order_sequence {
-    type: left_outer
-    sql_on: ${order_items.order_id} = ${user_order_sequence.order_id} ;;
-    relationship: many_to_one
   }
 
   join: events {

@@ -104,6 +104,7 @@ view: order_items {
   measure: order_count {
     type: count_distinct
     sql: ${order_id} ;;
+    drill_fields: [detail*]
   }
 
   measure: earliest_order {
