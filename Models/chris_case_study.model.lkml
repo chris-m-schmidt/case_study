@@ -6,7 +6,7 @@ include: "/**/*.view"                 # All views anywhere
 # include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)
 # include: "/*.view"                  # All views not in any folder
 
-#update1
+#update
 explore: users {
   label: "Customer"
   description: "User Attributes and Customer Behavior Metrics"
