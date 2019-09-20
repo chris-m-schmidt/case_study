@@ -11,6 +11,10 @@ view: order_items {
     sql: ${TABLE}.id ;;
   }
 
+  dimension: penguin {
+    sql: 'PENGUIN!?@?@?' ;;
+  }
+
   dimension_group: created {
     type: time
     timeframes: [
