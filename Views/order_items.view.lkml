@@ -1,3 +1,4 @@
+# include: "//second_project/manifest.lkml"
 view: order_items {
   sql_table_name: public.order_items ;;
 
@@ -16,10 +17,7 @@ view: order_items {
       raw,
       time,
       date,
-      week,
       month,
-      month_name,
-      quarter,
       year
     ]
     sql: ${TABLE}.created_at ;;
@@ -46,7 +44,12 @@ view: order_items {
 
   dimension: order_id {
     type: number
-    sql: ${TABLE}.order_id ;;
+    sql: ${TABLE}.order_id
+    ;;
+    # link: {
+    #   label: "testing link"
+    #   url: "https://@{domain}.looker.com/explore/chris_case_study/order_items?fields=order_items.items_count&f[order_items.order_id]={{ value }}&limit=500"
+    # }
   }
 
   dimension_group: returned {
@@ -82,11 +85,6 @@ view: order_items {
     sql: ${TABLE}.shipped_at ;;
   }
 
-  dimension: status {
-    type: string
-    sql: ${TABLE}.status ;;
-  }
-
   dimension: user_id {
     type: number
     sql: ${TABLE}.user_id ;;
@@ -105,18 +103,6 @@ view: order_items {
     type: count_distinct
     sql: ${order_id} ;;
     drill_fields: [detail*]
-  }
-
-  measure: earliest_order {
-    type: date_time
-    sql: MIN(${created_raw}) ;;
-    convert_tz: no
-  }
-
-  measure: latest_order {
-    type: date_time
-    sql: MAX(${created_raw}) ;;
-    convert_tz: no
   }
 
   measure: average_sale_price {
@@ -164,33 +150,59 @@ view: order_items {
     drill_fields: [users.gender, users.age_tier, average_spend_per_customer]
   }
 
-  measure: new_cutomer_total_sales {
-    hidden: yes
-    type: sum
-    sql: ${sale_price} ;;
+  measure: average_gross_margin {
+    description: "Average difference between the total revenue from completed sales and the cost of the goods that were sold"
+    type: average
+    sql: ${order_items.sale_price} - ${inventory_items.cost} ;;
     filters: {
-      field: users.is_new_user
-      value: "yes"
+      field: order_items.status
+      value: "-Cancelled,-Returned"
     }
-  }
-
-  measure: new_customer_count {
-    hidden: yes
-    type: count_distinct
-    sql: ${user_id} ;;
-    filters: {
-      field: users.is_new_user
-      value: "yes"
-    }
-  }
-
-  measure: average_spend_per_new_customer {
-    description: "Total Sale Price / total number of customers"
-    type: number
-    sql: ${new_cutomer_total_sales} / NULLIF(${new_customer_count},0) ;;
     value_format_name: usd
-    group_label: "Sales Metrics"
-    drill_fields: [users.gender, users.age_tier, average_spend_per_new_customer]
+    group_label: "Revenue and Profit Metrics"
+    drill_fields: [inventory_items.product_brand, inventory_items.product_category, average_gross_margin]
+  }
+
+  measure: total_gross_margin {
+    description: "Total difference between the total revenue from completed sales and the cost of the goods that were sold"
+    type: sum
+    sql: ${order_items.sale_price} - ${inventory_items.cost} ;;
+    filters: {
+      field: order_items.status
+      value: "-Cancelled,-Returned"
+    }
+    value_format_name: usd
+    group_label: "Revenue and Profit Metrics"
+    drill_fields: [inventory_items.product_brand, inventory_items.product_category, total_gross_margin]
+  }
+
+  measure: gross_margin_percent {
+    description: "Total Gross Margin Amount / Total Revenue"
+    type: number
+    sql: ${total_gross_margin} / NULLIF(${total_gross_revenue},0) ;;
+    value_format_name: percent_1
+    group_label: "Revenue and Profit Metrics"
+  }
+  measure: earliest_order {
+    type: date_time
+    sql: MIN(${created_raw}) ;;
+    convert_tz: no
+  }
+
+  measure: latest_order {
+    type: date_time
+    sql: MAX(${created_raw}) ;;
+    convert_tz: no
+  }
+
+  dimension: status {
+    type: string
+    sql: order_items.status ;;
+  }
+
+  dimension: is_cancelled {
+    type: yesno
+    sql: ${status} = 'Cancelled' ;;
   }
 
   measure: total_gross_revenue {
@@ -205,22 +217,6 @@ view: order_items {
     group_label: "Revenue and Profit Metrics"
     }
 
-  measure: total_gross_revenue_from_new_customers {
-    description: "Total revenue from users who have signed up with the website in the last 90 complete days."
-    type: sum
-    sql: ${sale_price} ;;
-    filters: {
-      field: status
-      value: "-Cancelled,-Returned"
-    }
-    filters: {
-      field: users.is_new_user
-      value: "yes"
-    }
-    value_format_name: usd
-    group_label: "Revenue and Profit Metrics"
-    }
-
   measure: total_gross_revenue_from_existing_customers {
     description: "Total revenue from users who signed up with the website more than 90 complete days ago."
     type: sum
@@ -229,45 +225,7 @@ view: order_items {
       field: status
       value: "-Cancelled,-Returned"
     }
-    filters: {
-      field: users.is_existing_user
-      value: "yes"
-    }
     value_format_name: usd
-    group_label: "Revenue and Profit Metrics"
-    }
-
-  measure: average_gross_margin {
-    description: "Average difference between the total revenue from completed sales and the cost of the goods that were sold"
-    type: average
-    sql: ${sale_price} - ${inventory_items.cost} ;;
-    filters: {
-      field: status
-      value: "-Cancelled,-Returned"
-    }
-    value_format_name: usd
-    group_label: "Revenue and Profit Metrics"
-    drill_fields: [inventory_items.product_brand, inventory_items.product_category, average_gross_margin]
-  }
-
-  measure: total_gross_margin {
-    description: "Total difference between the total revenue from completed sales and the cost of the goods that were sold"
-    type: sum
-    sql: ${sale_price} - ${inventory_items.cost} ;;
-    filters: {
-      field: status
-      value: "-Cancelled,-Returned"
-    }
-    value_format_name: usd
-    group_label: "Revenue and Profit Metrics"
-    drill_fields: [inventory_items.product_brand, inventory_items.product_category, total_gross_margin]
-  }
-
-  measure: gross_margin_percent {
-    description: "Total Gross Margin Amount / Total Revenue"
-    type: number
-    sql: ${total_gross_margin} / NULLIF(${total_gross_revenue},0) ;;
-    value_format_name: percent_1
     group_label: "Revenue and Profit Metrics"
     }
 
@@ -378,9 +336,9 @@ set: detail {
     id,
     users.id,
     users.first_name,
-    users.last_name,
-    inventory_items.id,
-    inventory_items.product_name
+    users.last_name
+#     inventory_items.id,
+#     inventory_items.product_name
   ]
 }
 }

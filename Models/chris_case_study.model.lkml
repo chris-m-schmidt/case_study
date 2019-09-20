@@ -1,4 +1,5 @@
 connection: "thelook_events_redshift"
+# include: "//second_project/*.lkml"
 
 include: "/**/*.view"                 # All views anywhere
 # include: "/Views/**/*.view"         # All views anywhere inside "Views" folder (sub-folder or free)
@@ -57,12 +58,13 @@ explore: order_items {
     relationship: many_to_one
     sql:  ;;
   }
+
 }
 
 explore: brand_comparison {
   from: order_items
   view_name: order_items
-  fields: [order_items.created_date, order_items.created_week, order_items.created_month,
+  fields: [order_items.created_date, order_items.created_month,
           order_items.items_count, order_items.total_gross_revenue, order_items.status,
           inventory_items.product_category, inventory_items.product_brand, inventory_items.brand_comparison,
           inventory_items.brand_to_compare]
