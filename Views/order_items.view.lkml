@@ -1,11 +1,10 @@
 # include: "//second_project/manifest.lkml"
 # include: "//z_project_import_demo_parent/*.view.lkml"  #from aaron's example
 # include: "//taylor_project_import/*.view.lkml"
-include: "taylor_project_import/manifest.lkml"
+# include: "taylor_project_import/manifest.lkml"
 
 view: order_items {
   sql_table_name: public.order_items ;;
-
 
 # -------------------- DIMENSIONS ---------------------------
 
@@ -28,6 +27,34 @@ view: order_items {
   dimension: penguin {
     sql: 'PENGUIN!?@?@?' ;;
   }
+
+  ##### { TESTING WORKAROUND FOR DIFFERENT DRILL BASED ON MEASURE VALUE
+
+  measure: order_count {      # 1. This is your original measure
+    type: count_distinct
+    sql: ${order_id} ;;
+    # 3. define an inclusive list of fields
+    drill_fields: [order_id, delivered_date, returned_date]
+
+  }
+
+  measure: order_count_custom_drill { # 4. Create another version of the measure.
+    sql: ${order_count};;     # 5. The SQL will just reference the measure above
+    type: number              # 6. Type: number is a placeholder, since the aggregation
+    link: {                   # logic (count_distinct, in this case) is defined above
+      label: "Drill"          # 7. Add link to customize to the drill path defined above
+      url:
+      "{{ order_count._link }}
+      {% if order_items.status._value == 'Complete' %}
+      &fields=order_items.order_id,order_items.delivered_date
+      {% elsif order_items.status._value == 'Returned' %}
+      &fields=order_items.order_id,order_items.returned_date
+      {% endif %}"
+    }
+  }
+
+  ##### } TESTING WORKAROUND FOR DIFFERENT DRILL BASED ON MEASURE VALUE
+
 
   dimension_group: created {
     type: time
@@ -107,7 +134,7 @@ view: order_items {
     drill_fields: [id]
   }
 
-  measure: order_count {
+  measure: order_count_2 {
     type: count_distinct
     sql: ${order_id} ;;
     drill_fields: [detail*]
