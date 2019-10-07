@@ -12,7 +12,7 @@ explore: users {
   label: "Customer"
   description: "User Attributes and Customer Behavior Metrics"
 
-  join: cohort_facts {
+  join: cohort_facts { #comment
     type: inner
     sql_on: ${users.id} = ${cohort_facts.user_id} ;;
     relationship: one_to_one

@@ -1,6 +1,7 @@
 view: users {
   sql_table_name: public.users ;;
 
+  drill_fields: [id, email, city, created_date]
 
 # --------------------------- DIMENSIONS -------------------
 
@@ -160,7 +161,7 @@ view: users {
 
   measure: average_days_since_signup {
     type: average
-    sql: ${days_since_signup}_signup} ;;
+    sql: ${days_since_signup} ;;
   }
 
   measure: average_months_since_signup {
