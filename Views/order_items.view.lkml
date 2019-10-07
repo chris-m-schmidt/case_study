@@ -1,9 +1,23 @@
 # include: "//second_project/manifest.lkml"
+# include: "//z_project_import_demo_parent/*.view.lkml"  #from aaron's example
+# include: "//taylor_project_import/*.view.lkml"
+include: "taylor_project_import/manifest.lkml"
+
 view: order_items {
   sql_table_name: public.order_items ;;
 
 
 # -------------------- DIMENSIONS ---------------------------
+
+  dimension: order_id {
+    type: number
+    sql: ${TABLE}.order_id
+      ;;
+#     link: {
+#       label: "testing link"
+#       url: "https://@{domain}.looker.com/explore/chris_case_study/order_items?fields=order_items.items_count&f[order_items.order_id]={{ value }}&limit=500"
+#     }
+  }
 
   dimension: id {
     primary_key: yes
@@ -44,16 +58,6 @@ view: order_items {
   dimension: inventory_item_id {
     type: number
     sql: ${TABLE}.inventory_item_id ;;
-  }
-
-  dimension: order_id {
-    type: number
-    sql: ${TABLE}.order_id
-    ;;
-    # link: {
-    #   label: "testing link"
-    #   url: "https://@{domain}.looker.com/explore/chris_case_study/order_items?fields=order_items.items_count&f[order_items.order_id]={{ value }}&limit=500"
-    # }
   }
 
   dimension_group: returned {

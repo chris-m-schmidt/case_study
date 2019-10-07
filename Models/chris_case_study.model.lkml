@@ -17,6 +17,7 @@ explore: users {
     sql_on: ${users.id} = ${cohort_facts.user_id} ;;
     relationship: one_to_one
   }
+#   new thing
 
   join: order_items {
 #     fields: [order_items.customer_explore_field_set*]
