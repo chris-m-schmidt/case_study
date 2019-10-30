@@ -10,8 +10,7 @@ view: order_items {
 
   dimension: order_id {
     type: number
-    sql: ${TABLE}.order_id
-      ;;
+    sql: ${TABLE}.order_id;;
     link: {
       label: "testing link"
       url: "https://@{domain}.looker.com/explore/chris_case_study/order_items?fields=order_items.items_count&f[order_items.order_id]={{ value }}&limit=500"
