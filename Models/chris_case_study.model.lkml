@@ -7,11 +7,11 @@ include: "/**/*.view"                 # All views anywhere
 # include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)
 # include: "/*.view"                  # All views not in any folder
 
-datagroup: ten_am {
+datagroup: eleven_am {
   sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*11)/(60*60*24)) ;;
 }
 
-persist_with: ten_am
+persist_with: eleven_am
 
 
 explore: users {
