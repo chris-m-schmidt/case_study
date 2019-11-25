@@ -8,7 +8,7 @@ include: "/**/*.view"                 # All views anywhere
 # include: "/*.view"                  # All views not in any folder
 
 datagroup: ten_am {
-  sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*10)/(60*60*24)) ;;
+  sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*11)/(60*60*24)) ;;
 }
 
 persist_with: ten_am
