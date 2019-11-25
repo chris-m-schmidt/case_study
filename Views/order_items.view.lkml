@@ -9,6 +9,7 @@ view: order_items {
 # -------------------- DIMENSIONS ---------------------------
 
   dimension: order_id {
+    label: "Order ID - @{domain}"
     type: number
     sql: ${TABLE}.order_id;;
     link: {
@@ -231,7 +232,7 @@ view: order_items {
 
   dimension: status {
     type: string
-    sql: order_items.status ;;
+    sql: ${TABLE}.status ;;
   }
 
   dimension: is_cancelled {
