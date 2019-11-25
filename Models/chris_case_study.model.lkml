@@ -11,6 +11,8 @@ datagroup: ten_am {
   sql_trigger: SELECT FLOOR((UNIX_TIMESTAMP(NOW()) - 60*60*10)/(60*60*24)) ;;
 }
 
+persist_with: ten_am
+
 
 explore: users {
   label: "Customer"
