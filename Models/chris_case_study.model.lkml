@@ -15,7 +15,7 @@ persist_with: eleven_am
 
 
 explore: users {
-  label: "Customer"
+  label: "Customer - Drake version"
   description: "User Attributes and Customer Behavior Metrics"
 
   join: cohort_facts { #comment
