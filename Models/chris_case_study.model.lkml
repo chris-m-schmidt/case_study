@@ -13,6 +13,9 @@ datagroup: eleven_am {
 
 persist_with: eleven_am
 
+##### EXPLORATORY STUFF!!! #####
+explore: inventory_items {}
+##### END EXPLORATORY #####
 
 explore: users {
   label: "Customer - Taylor's Version"
