@@ -15,18 +15,14 @@ persist_with: eleven_am
 
 
 explore: users {
-  label: "Customer - Taylor's Version"
-  description: "User Attributes and Customer Behavior Metrics"
 
   join: cohort_facts { #comment
     type: inner
     sql_on: ${users.id} = ${cohort_facts.user_id} ;;
     relationship: one_to_one
   }
-#   new thing
 
   join: order_items {
-#     fields: [order_items.customer_explore_field_set*]
     type: inner
     sql_on: ${users.id} = ${order_items.user_id} ;;
     relationship: one_to_many
