@@ -1,5 +1,10 @@
 view: users {
-  sql_table_name: public.users ;;
+#   sql_table_name: public.users ;;
+  derived_table: {
+    sql:  select * from public.users
+          where {% condition order_items.derived_table_date_filter %} users.created_at {% endcondition %}
+    ;;
+  }
 
 
 # --------------------------- DIMENSIONS -------------------
@@ -20,6 +25,44 @@ view: users {
     tiers: [15, 26, 36, 51, 66]
     style: integer
     sql: ${age} ;;
+  }
+
+  parameter: tier_selector {
+    type: unquoted
+    allowed_value: {
+      label: "Tier 1"
+      value: "tier_1"
+    }
+    allowed_value: {
+      label: "Tier 2"
+      value: "tier_2"
+    }
+  }
+
+  dimension: age_tier_1 {
+    hidden: yes
+    type: tier
+    sql: ${TABLE}.age ;;
+    tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+    style: integer
+  }
+
+  dimension: age_tier_2 {
+    hidden: yes
+    type: tier
+    sql: ${TABLE}.age ;;
+    tiers: [0, 20, 40, 60, 80]
+    style: interval
+  }
+
+  dimension: dynamic_age_tier {
+    label_from_parameter: tier_selector
+    sql:
+    {% if tier_selector._parameter_value == 'tier_1' %}
+      ${age_tier_1}
+    {% else %}
+      ${age_tier_2}
+    {% endif %};;
   }
 
   dimension: city {
@@ -107,9 +150,21 @@ view: users {
     sql_longitude: ${longitude} ;;
   }
 
+  dimension: zoom_value {
+    type: number
+    sql: 6 ;;
+  }
+
   dimension: state {
     map_layer_name: us_states
     sql: ${TABLE}.state ;;
+    drill_fields: [city]
+    link: {
+      label: "Test Treemap Drill"
+#       url: "https://profservices.dev.looker.com/dashboards/VNdC28OQOQiNLv8XXPjKC3?State={{ value }}"
+      url: "/dashboards/VNdC28OQOQiNLv8XXPjKC3?State={{ value }}"
+
+    }
   }
 
   dimension: traffic_source {
@@ -122,12 +177,31 @@ view: users {
     sql: ${TABLE}.zip ;;
   }
 
+  measure: zip_2 {
+    type: number
+    sql: ${zip} ;;
+    value_format: "0"
+  }
 
 # ---------------------- MEASURES ----------------------------
 
   measure: count {
     type: count
-    drill_fields: [id, last_name, first_name]
+#     drill_fields: [id, last_name, first_name]
+    drill_fields: [state, count]
+#     html:  <p style="color: black; font-size: 150%; background: silver"> {{linked_value}} </p> ;;
+    link: {
+      label: "Drill as Map"
+      url: "
+      {% assign vis_config = '{\"type\": \"looker_map\"}' %}
+      {{ link }}&vis_config={{ vis_config | encode_uri }}&toggle=dat,pik,vis&limit=5000"
+    }
+    link: {
+      label: "Drill as Table"
+      url: "
+      {% assign vis_config = '{\"type\": \"table\"}' %}
+      {{ link }}&vis_config={{ vis_config | encode_uri }}&toggle=dat,pik,vis&limit=5000"
+    }
   }
 
   measure: month_to_date_user_count {

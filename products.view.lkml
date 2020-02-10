@@ -1,3 +1,5 @@
+explore: products {}
+
 view: products {
   sql_table_name: public.products ;;
 
@@ -27,7 +29,16 @@ view: products {
 
   dimension: department {
     type: string
-    sql: ${TABLE}.department ;;
+    case: {
+      when: {
+        sql: ${TABLE}.department = 'Women' ;;
+        label: "Women"
+      }
+      when: {
+        sql: ${TABLE}.department = 'Men' ;;
+        label: "Men"
+      }
+    }
   }
 
   dimension: distribution_center_id {
@@ -61,7 +72,9 @@ view: products {
 
 #----------- MEASURES ------------
 
-
+measure: count {
+  type: count
+}
 
 
 #---------- FILTERS -----------
