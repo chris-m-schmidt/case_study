@@ -2,6 +2,7 @@ connection: "thelook_events_redshift"
 # include: "//second_project/*.lkml"
 
 include: "/**/*.view"                 # All views anywhere
+include: "/**/*.dashboard"
 # include: "/Views/**/*.view"         # All views anywhere inside "Views" folder (sub-folder or free)
 # include: "/Views/*.view"            # All views in "Views" folder that are not in sub-folder (redundant from 1st)
 # include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)
@@ -13,35 +14,24 @@ datagroup: eleven_am {
 
 persist_with: eleven_am
 
-##### EXPLORATORY STUFF!!! #####
-explore: inventory_items {}
-##### END EXPLORATORY #####
 
 explore: users {
-
-  join: cohort_facts { #comment
-    type: inner
-    sql_on: ${users.id} = ${cohort_facts.user_id} ;;
-    relationship: one_to_one
-  }
-
   join: order_items {
     type: inner
     sql_on: ${users.id} = ${order_items.user_id} ;;
     relationship: one_to_many
   }
-
-  join: events {
-    type: inner
-    sql_on: ${users.id} = ${events.user_id} ;;
-    relationship: one_to_many
-  }
-
   join: inventory_items {
     type: inner
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
     relationship: many_to_one
   }
+
+  join: order_rollup_bindfilters {
+    sql_on: ${order_items.order_id}=${order_rollup_bindfilters.order_id} ;;
+    relationship: many_to_one
+  }
+
 }
 
 explore: order_items {
@@ -59,13 +49,44 @@ explore: order_items {
     relationship: many_to_one
   }
 
-  join: free_text {
-    type: left_outer
+  join: order_rollup_base {
+    sql_on: ${order_items.order_id}=${order_rollup_base.order_id} ;;
     relationship: many_to_one
-    sql:  ;;
+  }
+
+  join: order_rollup_bindfilters {
+    sql_on: ${order_items.order_id}=${order_rollup_bindfilters.order_id} ;;
+    relationship: many_to_one
+  }
+
+  join: order_rollup_bindallfilters {
+    sql_on: ${order_items.order_id}=${order_rollup_bindallfilters.order_id} ;;
+    relationship: many_to_one
   }
 
 }
+
+# explore: users {
+#
+#   join: order_items {
+#     type: inner
+#     sql_on: ${users.id} = ${order_items.user_id} ;;
+#     relationship: one_to_many
+#   }
+#
+#   join: events {
+#     type: inner
+#     sql_on: ${users.id} = ${events.user_id} ;;
+#     relationship: one_to_many
+#   }
+#
+#   join: inventory_items {
+#     type: inner
+#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+#     relationship: many_to_one
+#   }
+# }
+
 
 explore: brand_comparison {
   from: order_items
