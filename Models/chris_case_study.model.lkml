@@ -11,9 +11,11 @@ include: "/**/*.dashboard"
 datagroup: eleven_am {
   sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*11)/(60*60*24)) ;;
 }
-
 persist_with: eleven_am
 
+datagroup: no_cache {
+  max_cache_age: "0 seconds"
+}
 
 explore: users {
   join: order_items {
@@ -21,17 +23,26 @@ explore: users {
     sql_on: ${users.id} = ${order_items.user_id} ;;
     relationship: one_to_many
   }
+
+  join: events {
+    type: inner
+    sql_on: ${users.id} = ${events.user_id} ;;
+    relationship: one_to_many
+  }
+
   join: inventory_items {
     type: inner
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
     relationship: many_to_one
   }
+}
 
-  join: order_rollup_bindfilters {
-    sql_on: ${order_items.order_id}=${order_rollup_bindfilters.order_id} ;;
-    relationship: many_to_one
-  }
 
+explore: users2 {
+  extends: [users]
+  from: users
+  view_name: users
+  persist_with: no_cache
 }
 
 explore: order_items {
@@ -65,27 +76,6 @@ explore: order_items {
   }
 
 }
-
-# explore: users {
-#
-#   join: order_items {
-#     type: inner
-#     sql_on: ${users.id} = ${order_items.user_id} ;;
-#     relationship: one_to_many
-#   }
-#
-#   join: events {
-#     type: inner
-#     sql_on: ${users.id} = ${events.user_id} ;;
-#     relationship: one_to_many
-#   }
-#
-#   join: inventory_items {
-#     type: inner
-#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-#     relationship: many_to_one
-#   }
-# }
 
 
 explore: brand_comparison {
