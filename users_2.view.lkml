@@ -1,4 +1,4 @@
-view: users {
+view: users_2 {
 #   sql_table_name: public.users ;;
   derived_table: {
     sql:  select * from public.users

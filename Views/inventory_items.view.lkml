@@ -32,17 +32,16 @@ view: inventory_items {
   dimension: product_brand {
     type: string
     sql: ${TABLE}.product_brand ;;
-#     html:  <a href="https://profservices.dev.looker.com/dashboards/107?Brand%20to%20Compare={{ value }}"><button style="color: blue; background: yellow; font-size:100%">{{ value }}</button></a> ;;
-#     link: {
-#       label: "Google"
-#       url: "http://www.google.com/search?q={{ value | url_encode }}"
-#       icon_url: "http://google.com/favicon.ico"
-#     }
-#     link: {
-#       label: "Brand Comparison"
-#       url: "https://profservices.dev.looker.com/dashboards/107?Brand%20to%20Compare={{ value | url_encode }}"
-#       icon_url: "http://looker.com/favicon.ico"
-#     }
+    link: {
+      label: "Google"
+      url: "http://www.google.com/search?q={{ value | url_encode }}"
+      icon_url: "http://google.com/favicon.ico"
+    }
+    link: {
+      label: "Brand Comparison"
+      url: "https://profservices.dev.looker.com/dashboards/107?Brand%20to%20Compare={{ value | url_encode }}"
+      icon_url: "http://looker.com/favicon.ico"
+    }
 
     drill_fields: [id, product_category, product_name]
   }

@@ -1,6 +1,6 @@
-include: "chris_case_study.model.lkml"
+include: "/*/chris_case_study.model.lkml"
 
-view: customer_facts {
+view: cohort_facts {
   derived_table: {
     explore_source: users {
       column: user_id { field: order_items.user_id }
@@ -8,9 +8,16 @@ view: customer_facts {
       column: latest_order { field: order_items.latest_order }
       column: order_count { field: order_items.order_count }
       column: total_gross_revenue { field: order_items.total_gross_revenue }
+      bind_filters: {
+        from_field: cohort_facts.ndt_date_filter
+        to_field: users.created_date
+      }
     }
   }
 
+  filter: ndt_date_filter {
+    type: date
+  }
 
 # -------------------------- DIMENSIONS ---------------------------------
 
