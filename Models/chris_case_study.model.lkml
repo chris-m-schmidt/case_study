@@ -2,6 +2,7 @@ connection: "thelook_events_redshift"
 # include: "//second_project/*.lkml"
 
 include: "/**/*.view"                 # All views anywhere
+include: "/**/*.dashboard"
 # include: "/Views/**/*.view"         # All views anywhere inside "Views" folder (sub-folder or free)
 # include: "/Views/*.view"            # All views in "Views" folder that are not in sub-folder (redundant from 1st)
 # include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)
@@ -11,18 +12,13 @@ include: "/single_tile_lookml.dashboard.lookml"
 datagroup: eleven_am {
   sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*11)/(60*60*24)) ;;
 }
-
 persist_with: eleven_am
 
+datagroup: no_cache {
+  max_cache_age: "0 seconds"
+}
 
 explore: users {
-
-  join: cohort_facts { #comment
-    type: inner
-    sql_on: ${users.id} = ${cohort_facts.user_id} ;;
-    relationship: one_to_one
-  }
-
   join: order_items {
     type: inner
     sql_on: ${users.id} = ${order_items.user_id} ;;
@@ -42,6 +38,14 @@ explore: users {
   }
 }
 
+
+explore: users2 {
+  extends: [users]
+  from: users
+  view_name: users
+  persist_with: no_cache
+}
+
 explore: order_items {
   description: "Detailed Order Item and Customer Metrics"
 
@@ -57,13 +61,23 @@ explore: order_items {
     relationship: many_to_one
   }
 
-  join: free_text {
-    type: left_outer
+  join: order_rollup_base {
+    sql_on: ${order_items.order_id}=${order_rollup_base.order_id} ;;
     relationship: many_to_one
-    sql:  ;;
+  }
+
+  join: order_rollup_bindfilters {
+    sql_on: ${order_items.order_id}=${order_rollup_bindfilters.order_id} ;;
+    relationship: many_to_one
+  }
+
+  join: order_rollup_bindallfilters {
+    sql_on: ${order_items.order_id}=${order_rollup_bindallfilters.order_id} ;;
+    relationship: many_to_one
   }
 
 }
+
 
 explore: brand_comparison {
   from: order_items
