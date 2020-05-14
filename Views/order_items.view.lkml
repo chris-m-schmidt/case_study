@@ -1,55 +1,18 @@
-# include: "//second_project/manifest.lkml"
-# include: "//z_project_import_demo_parent/*.view.lkml"  #from aaron's example
-# include: "//taylor_project_import/*.view.lkml"
-# include: "taylor_project_import/manifest.lkml"
-
-view: order_items_2 {
+view: order_items {
   sql_table_name: public.order_items ;;
 
 # -------------------- DIMENSIONS ---------------------------
 
   dimension: order_id {
-#     label: "Order ID - @{domain}"
     type: number
     sql: ${TABLE}.order_id;;
-#     link: {
-#       label: "testing link"
-#       url: "https://@{domain}.looker.com/explore/chris_case_study/order_items?fields=order_items.items_count&f[order_items.order_id]={{ value }}&limit=500"
-#     }
   }
-
-  dimension: link {
-    sql: ${TABLE}.order_id;;
-    link: {
-      label: "test"
-      url: "https://profservices.dev.looker.com/dashboards/B3Avvnn1kG09JryVzM2Dg0?Brand={{ _filters['inventory_items.product_brand'] }}"
-    }
-  }
-
   dimension: id {
     primary_key: yes
     type: number
     sql: ${TABLE}.id ;;
   }
 
-  dimension: penguin {
-    sql: 'PENGUIN!?@?@?' ;;
-  }
-
-  measure: order_count_1 {
-    type: count_distinct
-    sql: ${order_id} ;;
-    html: <a href="http://www.google.com/search?q=={{ value }}"><button>First Button</button></a>
-    <br/>
-    <a href="http://www.google.com/search?q=={{ total_sales._value }}"><button>Second Button</button></a>
-    ;;
-
-  }
-  measure: order_count_2 {
-#     label: " "
-    type: count_distinct
-    sql: ${order_id} ;;
-  }
 
   ##### { TESTING WORKAROUND FOR DIFFERENT DRILL BASED ON MEASURE VALUE
 
@@ -342,6 +305,16 @@ view: order_items_2 {
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
+
+### [ Percentile testing
+
+  measure: percentile_90 {
+    type: percentile
+    percentile: 90
+    sql: ${sale_price} ;;
+  }
+
+### ] Percentile testing
 
 
 # --------------- FILTERS -------------------------------
