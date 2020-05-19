@@ -51,6 +51,11 @@ explore: order_items {
     sql_on: ${order_items.user_id} = ${users.id} ;;
     relationship: many_to_one
   }
+
+  join: user_facts {
+    relationship: many_to_one
+    sql_on: ${users.id}= ${user_facts.id} ;;
+  }
 }
 
 
@@ -58,7 +63,7 @@ explore: brand_comparison {
   from: order_items
   view_name: order_items
   fields: [order_items.created_date, order_items.created_month,
-          order_items.items_count, order_items.total_gross_revenue, order_items.status,
+          order_items.order_items_count, order_items.total_gross_revenue, order_items.status,
           inventory_items.product_category, inventory_items.product_brand, inventory_items.brand_comparison,
           inventory_items.brand_to_compare]
 

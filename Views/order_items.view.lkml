@@ -16,7 +16,8 @@ view: order_items {
 
   ##### { TESTING WORKAROUND FOR DIFFERENT DRILL BASED ON MEASURE VALUE
 
-  measure: order_count {      # 1. This is your original measure
+  measure: order_count_original {      # 1. This is your original measure
+    hidden: yes
     type: count_distinct
     sql: ${order_id} ;;
     # 3. define an inclusive list of fields
@@ -25,6 +26,7 @@ view: order_items {
   }
 
   measure: order_count_custom_drill { # 4. Create another version of the measure.
+    hidden: yes
     sql: ${order_count};;     # 5. The SQL will just reference the measure above
     type: number              # 6. Type: number is a placeholder, since the aggregation
     link: {                   # logic (count_distinct, in this case) is defined above
@@ -41,6 +43,24 @@ view: order_items {
 
   ##### } TESTING WORKAROUND FOR DIFFERENT DRILL BASED ON MEASURE VALUE
 
+  dimension_group: current {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      day_of_year,
+      month,
+      year,
+      fiscal_month_num,
+      fiscal_year
+    ]
+    sql: GETDATE() ;;
+  }
+
+  dimension_group: max_subquery {
+    sql: select max( order_items.created_at) from public.order_items ;;
+  }
 
   dimension_group: created {
     type: time
@@ -48,8 +68,11 @@ view: order_items {
       raw,
       time,
       date,
+      day_of_year,
       month,
-      year
+      year,
+      fiscal_month_num,
+      fiscal_year
     ]
     sql: ${TABLE}.created_at ;;
   }
@@ -120,12 +143,12 @@ view: order_items {
 
 # ------------------- MEASURES ----------------------------
 
-  measure: items_count {
+  measure: order_items_count {
     type: count
     drill_fields: [id]
   }
 
-  measure: order_count_3 {
+  measure: order_count {
     type: count_distinct
     sql: ${order_id} ;;
     drill_fields: [detail*]
@@ -268,7 +291,7 @@ view: order_items {
   measure: returned_items_rate {
     description: "Number of Items Returned / total number of items sold"
     type: number
-    sql: 1.0 * ${order_items.returned_items_count} / NULLIF(${order_items.items_count},0) ;;
+    sql: 1.0 * ${order_items.returned_items_count} / NULLIF(${order_items.order_items_count},0) ;;
     value_format_name: percent_1
     group_label: "Return Metrics"
   }
@@ -312,6 +335,7 @@ view: order_items {
     type: percentile
     percentile: 90
     sql: ${sale_price} ;;
+    drill_fields: [sale_price, order_items_count]
   }
 
 ### ] Percentile testing
@@ -348,7 +372,7 @@ set: customer_explore_field_set {
     order_items.created_date,
     order_items.created_month,
     order_items.status,
-    order_items.items_count,
+    order_items.order_items_count,
     order_items.order_count,
     order_items.customer_count,
     order_items.earliest_order,
