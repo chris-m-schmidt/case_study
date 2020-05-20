@@ -38,6 +38,7 @@ explore: users {
 }
 
 explore: order_items {
+#   persist_with: 2am_etl
   description: "Detailed Order Item and Customer Metrics"
 
   join: inventory_items {
@@ -55,6 +56,10 @@ explore: order_items {
   join: user_facts {
     relationship: many_to_one
     sql_on: ${users.id}= ${user_facts.id} ;;
+  }
+  join: products {
+    sql_on: ${products.id} = ${inventory_items.product_id} ;;
+    relationship: many_to_one
   }
 }
 

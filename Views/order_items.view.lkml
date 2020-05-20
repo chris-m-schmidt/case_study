@@ -116,6 +116,7 @@ view: order_items {
   }
 
   dimension: sale_price {
+    html: <b>{{ value }}</b> ;;
     type: number
     sql: ${TABLE}.sale_price ;;
   }
@@ -168,6 +169,14 @@ view: order_items {
     sql: ${sale_price} ;;
     value_format_name: usd
     group_label: "Sales Metrics"
+    html:
+    {% if value > 100000 %}
+    <font color="darkgreen">{{ rendered_value }}</font>
+    {% elsif value > 50 %}
+    <font color="goldenrod">{{ rendered_value }}</font>
+    {% else %}
+    <font color="darkred">{{ rendered_value }}</font>
+    {% endif %} ;;
   }
 
   measure: year_to_date_total_sales {
