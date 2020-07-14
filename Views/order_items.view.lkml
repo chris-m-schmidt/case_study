@@ -6,6 +6,7 @@ view: order_items {
   dimension: order_id {
     type: number
     sql: ${TABLE}.order_id;;
+    required_access_grants: [testy]
   }
   dimension: id {
     primary_key: yes

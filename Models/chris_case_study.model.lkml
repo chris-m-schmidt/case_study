@@ -17,7 +17,13 @@ datagroup: no_cache {
   max_cache_age: "0 seconds"
 }
 
+access_grant: testy {
+  allowed_values: ["Yes"]
+  user_attribute: can_see_pii
+}
+
 explore: users {
+  sql_always_where: ${order_items.order_id} is not null  ;;
   join: order_items {
     type: inner
     sql_on: ${users.id} = ${order_items.user_id} ;;
