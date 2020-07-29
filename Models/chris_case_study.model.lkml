@@ -1,8 +1,8 @@
 connection: "thelook_events_redshift"
 # include: "//second_project/*.lkml"
 
-include: "/**/*.view"                 # All views anywhere
-# include: "/**/*.dashboard"
+include: "/Views/*.view.lkml"                  # All views anywhere
+include: "/dashboards/business_stuff_1.dashboard"
 # include: "/Views/**/*.view"         # All views anywhere inside "Views" folder (sub-folder or free)
 # include: "/Views/*.view"            # All views in "Views" folder that are not in sub-folder (redundant from 1st)
 # include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)

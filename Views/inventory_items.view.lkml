@@ -120,7 +120,7 @@ view: inventory_items {
     }
 
   measure: total_cost {
-    required_access_grants: [testy]
+    # required_access_grants: [testy]
     description: "Total cost of items sold from inventory"
     type: sum
     sql: ${inventory_items.cost} ;;

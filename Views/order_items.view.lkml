@@ -6,7 +6,7 @@ view: order_items {
   dimension: order_id {
     type: number
     sql: ${TABLE}.order_id;;
-    required_access_grants: [testy]
+    # required_access_grants: [testy]
   }
   dimension: id {
     primary_key: yes
@@ -274,7 +274,7 @@ view: order_items {
     }
     value_format_name: usd
     group_label: "Revenue and Profit Metrics"
-    }
+  }
 
   measure: total_gross_revenue_from_existing_customers {
     description: "Total revenue from users who signed up with the website more than 90 complete days ago."
@@ -286,7 +286,7 @@ view: order_items {
     }
     value_format_name: usd
     group_label: "Revenue and Profit Metrics"
-    }
+  }
 
   measure: returned_items_count {
     description: "Number of items that were returned by dissatisfied customers"
@@ -376,39 +376,39 @@ view: order_items {
 
 # ---------------- SETS -----------------------------
 
-set: customer_explore_field_set {
-  fields: [
-    order_items.user_id,
-    order_items.created_date,
-    order_items.created_month,
-    order_items.status,
-    order_items.order_items_count,
-    order_items.order_count,
-    order_items.customer_count,
-    order_items.earliest_order,
-    order_items.latest_order,
-    order_items.total_sales,
-    order_items.average_spend_per_customer,
-    order_items.total_gross_revenue,
-    order_items.total_gross_revenue_from_new_customers,
-    order_items.total_gross_revenue_from_existing_customers,
-    order_items.returned_items_count,
-    order_items.returned_items_rate,
-#     order_items.returned_first_order_item,
-    order_items.customers_returning_items_count,
-    order_items.percent_of_customers_with_returns,
-  ]
-}
+  set: customer_explore_field_set {
+    fields: [
+      order_items.user_id,
+      order_items.created_date,
+      order_items.created_month,
+      order_items.status,
+      order_items.order_items_count,
+      order_items.order_count,
+      order_items.customer_count,
+      order_items.earliest_order,
+      order_items.latest_order,
+      order_items.total_sales,
+      order_items.average_spend_per_customer,
+      order_items.total_gross_revenue,
+      order_items.total_gross_revenue_from_new_customers,
+      order_items.total_gross_revenue_from_existing_customers,
+      order_items.returned_items_count,
+      order_items.returned_items_rate,
+     order_items.returned_first_order_item,
+      order_items.customers_returning_items_count,
+      order_items.percent_of_customers_with_returns,
+    ]
+  }
 
 # ----- Sets of fields for drilling ------
-set: detail {
-  fields: [
-    id,
-    users.id,
-    users.first_name,
-    users.last_name
-#     inventory_items.id,
-#     inventory_items.product_name
-  ]
-}
+  set: detail {
+    fields: [
+      id,
+      users.id,
+      users.first_name,
+      users.last_name,
+     inventory_items.id,
+     inventory_items.product_name
+    ]
+  }
 }
