@@ -1,12 +1,8 @@
 connection: "thelook_events_redshift"
-# include: "//second_project/*.lkml"
 
-include: "/Views/*.view.lkml"                  # All views anywhere
-include: "/dashboards/business_stuff_1.dashboard"
-# include: "/Views/**/*.view"         # All views anywhere inside "Views" folder (sub-folder or free)
-# include: "/Views/*.view"            # All views in "Views" folder that are not in sub-folder (redundant from 1st)
-# include: "/Views/*/*.view"          # All views in "Views" folder that are in sub-folder     (redundant from 1st)
-# include: "/*.view"                  # All views not in any folder
+include: "/Views/**/*.view.lkml"                  # All views anywhere
+# include: "/dashboards/business_stuff_1.dashboard"
+include: "/explores/*.explore.lkml"
 
 datagroup: eleven_am {
   sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*11)/(60*60*24)) ;;
@@ -22,52 +18,52 @@ access_grant: testy {
   user_attribute: can_see_pii
 }
 
-explore: users {
-  sql_always_where: ${order_items.order_id} is not null  ;;
-  join: order_items {
-    type: inner
-    sql_on: ${users.id} = ${order_items.user_id} ;;
-    relationship: one_to_many
-  }
-
-  join: events {
-    type: inner
-    sql_on: ${users.id} = ${events.user_id} ;;
-    relationship: one_to_many
-  }
-
-  join: inventory_items {
-    type: inner
-    sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-    relationship: many_to_one
-  }
-}
-
-explore: order_items {
-#   persist_with: 2am_etl
-  description: "Detailed Order Item and Customer Metrics"
-
-  join: inventory_items {
-    type: left_outer
-    sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-    relationship: many_to_one
-  }
-
-  join: users {
-    type: left_outer
-    sql_on: ${order_items.user_id} = ${users.id} ;;
-    relationship: many_to_one
-  }
-
-  join: user_facts {
-    relationship: many_to_one
-    sql_on: ${users.id}= ${user_facts.id} ;;
-  }
-  join: products {
-    sql_on: ${products.id} = ${inventory_items.product_id} ;;
-    relationship: many_to_one
-  }
-}
+# explore: users {
+#   sql_always_where: ${order_items.order_id} is not null  ;;
+#   join: order_items {
+#     type: inner
+#     sql_on: ${users.id} = ${order_items.user_id} ;;
+#     relationship: one_to_many
+#   }
+#
+#   join: events {
+#     type: inner
+#     sql_on: ${users.id} = ${events.user_id} ;;
+#     relationship: one_to_many
+#   }
+#
+#   join: inventory_items {
+#     type: inner
+#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+#     relationship: many_to_one
+#   }
+# }
+#
+# explore: order_items {
+# #   persist_with: 2am_etl
+#   description: "Detailed Order Item and Customer Metrics"
+#
+#   join: inventory_items {
+#     type: left_outer
+#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
+#     relationship: many_to_one
+#   }
+#
+#   join: users {
+#     type: left_outer
+#     sql_on: ${order_items.user_id} = ${users.id} ;;
+#     relationship: many_to_one
+#   }
+#
+#   join: user_facts {
+#     relationship: many_to_one
+#     sql_on: ${users.id}= ${user_facts.id} ;;
+#   }
+#   join: products {
+#     sql_on: ${products.id} = ${inventory_items.product_id} ;;
+#     relationship: many_to_one
+#   }
+# }
 
 
 explore: brand_comparison {

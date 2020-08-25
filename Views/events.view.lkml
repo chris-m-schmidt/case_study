@@ -1,5 +1,5 @@
 view: events {
-  sql_table_name: public.events ;;
+  sql_table_name: {{ database_picker }}public.events ;;
 
 
 #-------------- DIMENSIONS ---------------
