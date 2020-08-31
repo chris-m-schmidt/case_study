@@ -13,6 +13,10 @@ datagroup: no_cache {
   max_cache_age: "0 seconds"
 }
 
+datagroup: every_15_min {
+  sql_trigger: select 1;;
+}
+
 access_grant: testy {
   allowed_values: ["Yes"]
   user_attribute: can_see_pii
