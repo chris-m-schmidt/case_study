@@ -4,6 +4,7 @@ include: "/Views/**/*.view.lkml"                  # All views anywhere
 # include: "/dashboards/business_stuff_1.dashboard"
 include: "/explores/*.explore.lkml"
 
+include: "/Views/brand_test/e.explore"
 datagroup: eleven_am {
   sql_trigger: SELECT FLOOR((EXTRACT(epoch from GETDATE()) - 60*60*11)/(60*60*24)) ;;
 }

@@ -57,9 +57,11 @@ view: order_items {
       fiscal_year
     ]
     sql: GETDATE() ;;
+    hidden: yes
   }
 
   dimension_group: max_subquery {
+    hidden: yes
     sql: select max( order_items.created_at) from public.order_items ;;
   }
 
@@ -81,6 +83,7 @@ view: order_items {
   dimension: created_month_2 {
     type: date_month
     sql: ${TABLE}.created_at ;;
+    hidden: yes
   }
 
   dimension_group: delivered {
@@ -98,6 +101,7 @@ view: order_items {
   }
 
   dimension: inventory_item_id {
+    hidden: yes
     type: number
     sql: ${TABLE}.inventory_item_id ;;
   }
@@ -117,9 +121,10 @@ view: order_items {
   }
 
   dimension: sale_price {
-    html: <b>{{ value }}</b> ;;
+#     html: <b>{{ value }}</b> ;;
     type: number
     sql: ${TABLE}.sale_price ;;
+    value_format_name: usd
   }
 
   dimension_group: shipped {
@@ -148,6 +153,7 @@ view: order_items {
   measure: order_items_count {
     type: count
     drill_fields: [id]
+    hidden: yes
   }
 
   measure: order_count {
@@ -162,14 +168,16 @@ view: order_items {
     sql: ${sale_price} ;;
     value_format_name: usd
     group_label: "Sales Metrics"
+    hidden: yes
   }
 
   measure: total_sales {
     description: "Total sales from items sold"
     type: sum
-    sql: ${sale_price} ;;
+    sql: 0.076*${sale_price} ;;
     value_format_name: usd
-    group_label: "Sales Metrics"
+    drill_fields: [order_id, users.email, created_date, total_sales, products.name, status, sale_price]
+#     group_label: "Sales Metrics"
 #     html:
 #     {% if value > 100000 %}
 #     <font color="darkgreen">{{ rendered_value }}</font>
@@ -190,6 +198,7 @@ view: order_items {
       value: "yes"
     }
     group_label: "Sales Metrics"
+    hidden: yes
   }
 
   measure: cumulative_total_sales {
@@ -198,6 +207,7 @@ view: order_items {
     sql: ${total_sales} ;;
     value_format_name: usd
     group_label: "Sales Metrics"
+    hidden: yes
   }
 
   measure: average_spend_per_customer {
@@ -206,6 +216,7 @@ view: order_items {
     sql: ${total_sales} / NULLIF(${customer_count},0) ;;
     value_format_name: usd
     group_label: "Sales Metrics"
+    hidden: yes
     drill_fields: [users.gender, users.age_tier, average_spend_per_customer]
   }
 
@@ -246,12 +257,14 @@ view: order_items {
     type: date_time
     sql: MIN(${created_raw}) ;;
     convert_tz: no
+    hidden: yes
   }
 
   measure: latest_order {
     type: date_time
     sql: MAX(${created_raw}) ;;
     convert_tz: no
+    hidden: yes
   }
 
   dimension: status {
@@ -274,6 +287,7 @@ view: order_items {
     }
     value_format_name: usd
     group_label: "Revenue and Profit Metrics"
+    hidden: yes
   }
 
   measure: total_gross_revenue_from_existing_customers {
