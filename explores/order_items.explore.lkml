@@ -1,23 +1,8 @@
 include: "/Views/*.view.lkml"
 
 explore: order_items {
-  # access_filter: {
-  #   field: products.brand
-  #   user_attribute: brand
-  # }
+
   description: "Detailed Order Item and Customer Metrics"
-
-  sql_always_where:
-  {% if _user_attributes['brand'] != '' %}
-  ${products.brand} in ({{ _user_attributes['brand']}})
-  OR ${products.category} in ({{ _user_attributes['brand']}})
-  {% else %} 1=1
-  {% endif %};;
-
-  # sql_always_where:
-  # ${products.brand} in ({{ _user_attributes['brand']}})
-  # OR ${products.category} in ({{ _user_attributes['brand']}})
-  # ;;
 
   join: inventory_items {
     type: left_outer
@@ -46,31 +31,31 @@ explore: order_items {
   }
 }
 
-# # Place in `chris_case_study` model
-# explore: +order_items {  # refinements
-#   aggregate_table: rollup__created_date {
-#     query: {
-#       dimensions: [created_date]
-#       measures: [total_sales]
-#       timezone: "UTC"
-#     }
-#
-#     materialization: {
-#       datagroup_trigger: eleven_am
-#     }
-#   }
-# }
-# # Place in `chris_case_study` model
-# explore: +order_items {
-#   aggregate_table: rollup__created_date__products_brand {
-#     query: {
-#       dimensions: [created_date, products.brand]
-#       measures: [total_sales]
-#       timezone: "UTC"
-#     }
-#
-#     materialization: {
-#       datagroup_trigger: eleven_am
-#     }
-#   }
-# }
+# Place in `chris_case_study` model
+explore: +order_items {  # refinements
+  aggregate_table: rollup__created_date {
+    query: {
+      dimensions: [created_date]
+      measures: [total_sales]
+      timezone: "UTC"
+    }
+
+    materialization: {
+      datagroup_trigger: eleven_am
+    }
+  }
+}
+# Place in `chris_case_study` model
+explore: +order_items {
+  aggregate_table: rollup__created_date__products_brand {
+    query: {
+      dimensions: [created_date, products.brand]
+      measures: [total_sales]
+      timezone: "UTC"
+    }
+
+    materialization: {
+      datagroup_trigger: eleven_am
+    }
+  }
+}
