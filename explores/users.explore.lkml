@@ -1,4 +1,5 @@
 include: "/Views/*.view"
+include: "/Views/pop_2/*.view"
 include: "/Views/cohort_analysis/cohort_facts.view"
 
 explore: users {
@@ -25,4 +26,5 @@ explore: users {
     relationship: one_to_one
     sql_on: ${users.id} = ${cohort_facts.user_id} ;;
   }
+
 }

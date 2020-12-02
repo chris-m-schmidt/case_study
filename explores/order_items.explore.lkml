@@ -29,33 +29,37 @@ explore: order_items {
     sql_on: ${order_items.order_id} = ${orders_rollup.order_id} ;;
     relationship: many_to_one
   }
-}
-
-# Place in `chris_case_study` model
-explore: +order_items {  # refinements
-  aggregate_table: rollup__created_date {
-    query: {
-      dimensions: [created_date]
-      measures: [total_sales]
-      timezone: "UTC"
-    }
-
-    materialization: {
-      datagroup_trigger: eleven_am
-    }
+  join: user_facts_ndt {
+    sql_on: ${users.email} = ${user_facts_ndt.email} ;;
+    relationship:many_to_one
   }
 }
-# Place in `chris_case_study` model
-explore: +order_items {
-  aggregate_table: rollup__created_date__products_brand {
-    query: {
-      dimensions: [created_date, products.brand]
-      measures: [total_sales]
-      timezone: "UTC"
-    }
 
-    materialization: {
-      datagroup_trigger: eleven_am
-    }
-  }
-}
+# # Place in `chris_case_study` model
+# explore: +order_items {  # refinements
+#   aggregate_table: rollup__created_date {
+#     query: {
+#       dimensions: [created_date]
+#       measures: [total_sales]
+#       timezone: "UTC"
+#     }
+
+#     materialization: {
+#       datagroup_trigger: eleven_am
+#     }
+#   }
+# }
+# # Place in `chris_case_study` model
+# explore: +order_items {
+#   aggregate_table: rollup__created_date__products_brand {
+#     query: {
+#       dimensions: [created_date, products.brand]
+#       measures: [total_sales]
+#       timezone: "UTC"
+#     }
+
+#     materialization: {
+#       datagroup_trigger: eleven_am
+#     }
+#   }
+# }

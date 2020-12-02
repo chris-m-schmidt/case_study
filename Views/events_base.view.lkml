@@ -66,6 +66,7 @@ view: events {
   }
 
   dimension: sequence_number {
+    value_format_name: usd
     type: number
     sql: ${TABLE}.sequence_number ;;
   }

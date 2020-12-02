@@ -23,53 +23,6 @@ access_grant: testy {
   user_attribute: can_see_pii
 }
 
-# explore: users {
-#   sql_always_where: ${order_items.order_id} is not null  ;;
-#   join: order_items {
-#     type: inner
-#     sql_on: ${users.id} = ${order_items.user_id} ;;
-#     relationship: one_to_many
-#   }
-#
-#   join: events {
-#     type: inner
-#     sql_on: ${users.id} = ${events.user_id} ;;
-#     relationship: one_to_many
-#   }
-#
-#   join: inventory_items {
-#     type: inner
-#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-#     relationship: many_to_one
-#   }
-# }
-#
-# explore: order_items {
-# #   persist_with: 2am_etl
-#   description: "Detailed Order Item and Customer Metrics"
-#
-#   join: inventory_items {
-#     type: left_outer
-#     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
-#     relationship: many_to_one
-#   }
-#
-#   join: users {
-#     type: left_outer
-#     sql_on: ${order_items.user_id} = ${users.id} ;;
-#     relationship: many_to_one
-#   }
-#
-#   join: user_facts {
-#     relationship: many_to_one
-#     sql_on: ${users.id}= ${user_facts.id} ;;
-#   }
-#   join: products {
-#     sql_on: ${products.id} = ${inventory_items.product_id} ;;
-#     relationship: many_to_one
-#   }
-# }
-
 
 explore: brand_comparison {
   from: order_items

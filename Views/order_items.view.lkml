@@ -73,6 +73,7 @@ view: order_items {
       date,
       day_of_year,
       month,
+      week,
       year,
       fiscal_month_num,
       fiscal_year
@@ -160,6 +161,7 @@ view: order_items {
     type: count_distinct
     sql: ${order_id} ;;
     drill_fields: [detail*]
+    filters: [status: "-Cancelled"]
   }
 
   measure: average_sale_price {
@@ -252,19 +254,6 @@ view: order_items {
     sql: ${total_gross_margin} / NULLIF(${total_gross_revenue},0) ;;
     value_format_name: percent_1
     group_label: "Revenue and Profit Metrics"
-  }
-  measure: earliest_order {
-    type: date_time
-    sql: MIN(${created_raw}) ;;
-    convert_tz: no
-    hidden: yes
-  }
-
-  measure: latest_order {
-    type: date_time
-    sql: MAX(${created_raw}) ;;
-    convert_tz: no
-    hidden: yes
   }
 
   dimension: status {
