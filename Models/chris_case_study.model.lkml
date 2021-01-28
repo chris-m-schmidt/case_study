@@ -23,6 +23,8 @@ access_grant: testy {
   user_attribute: can_see_pii
 }
 
+explore: events {}
+
 
 explore: brand_comparison {
   from: order_items
