@@ -10,6 +10,10 @@ view: events {
     sql: ${TABLE}.id ;;
   }
 
+  dimension: new_field {
+    sql: ${TABLE}.id ;;
+  }
+
   dimension: browser {
     type: string
     sql: ${TABLE}.browser ;;
