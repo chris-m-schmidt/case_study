@@ -1,5 +1,5 @@
 view: order_items {
-  sql_table_name: public.order_items ;;
+  sql_table_name: thelook_events.order_items ;;
 
 # -------------------- DIMENSIONS ---------------------------
 
@@ -79,6 +79,17 @@ view: order_items {
       fiscal_year
     ]
     sql: ${TABLE}.created_at ;;
+  }
+
+  dimension: created_to_returned {
+    type: duration_day
+    sql_start: ${created_raw} ;;
+    sql_end: ${returned_raw} ;;
+  }
+
+  measure: count_0_days {
+    type: count
+    filters: [created_to_returned: "0"]
   }
 
   dimension: created_month_2 {
