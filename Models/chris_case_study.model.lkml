@@ -1,4 +1,4 @@
-connection: "thelook_events"
+connection: "thelook_events_redshift"
 
 include: "/Views/**/*.view.lkml"                  # All views anywhere
 # include: "/dashboards/business_stuff_1.dashboard"
