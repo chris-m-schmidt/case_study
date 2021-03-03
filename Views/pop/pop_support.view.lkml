@@ -1,4 +1,6 @@
 #You should not need to modify the code below.  Save this code in a file and include that file wherever needed (i.e. in your refinement that leverages this pop support logic)
+
+#2/1/21 fix.. changed 'periods_ago <=1' to 'periods_ago <=0'
 view: pop_support {
   derived_table: {
     sql:
@@ -10,7 +12,7 @@ view: pop_support {
         {%endif%}
       ) possible_periods
       where {%condition periods_ago_to_include%}periods_ago{%endcondition%}
-      {% if periods_ago_to_include._is_filtered == false%}and periods_ago <=1{%endif%}{%comment%}default to only one prior period{%endcomment%}
+      {% if periods_ago_to_include._is_filtered == false%}and periods_ago <=0{%endif%}{%comment%}default to only one prior period{%endcomment%}
       ;;
     }
 
