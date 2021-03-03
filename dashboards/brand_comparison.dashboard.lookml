@@ -1,5 +1,5 @@
-- dashboard: business_pulse_and_user_overview
-  title: Business Pulse and User Overview
+- dashboard: old_dashboard
+  title: Old Dashboard
   layout: newspaper
   preferred_viewer: dashboards
   elements:
