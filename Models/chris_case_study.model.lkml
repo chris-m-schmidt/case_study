@@ -1,7 +1,7 @@
 connection: "thelook_events_redshift" #test
 
 include: "/Views/**/*.view.lkml"                  # All views anywhere
-# include: "/dashboards/business_stuff_1.dashboard"
+include: "/dashboards/*.dashboard"
 include: "/explores/*.explore.lkml"
 
 include: "/Views/brand_test/e.explore"
