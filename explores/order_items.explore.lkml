@@ -33,6 +33,11 @@ explore: order_items {
     sql_on: ${users.email} = ${user_facts_ndt.email} ;;
     relationship:many_to_one
   }
+
+  join: sku_facts {
+    sql_on: ${sku_facts.sku} = ${products.sku} ;;
+    relationship: many_to_one
+  }
 }
 
 # # Place in `chris_case_study` model

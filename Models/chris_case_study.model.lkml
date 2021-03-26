@@ -1,4 +1,4 @@
-connection: "thelook_events_redshift" #test
+connection: "thelook_events_redshift" #test #make changes
 
 include: "/Views/**/*.view.lkml"                  # All views anywhere
 include: "/dashboards/*.dashboard"
